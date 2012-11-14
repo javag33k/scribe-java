@@ -1,5 +1,6 @@
 /*
  Magento 1.0a Oauth specific example.
+ * 
  */
 package org.scribe.examples;
 
