@@ -11,15 +11,15 @@ import org.scribe.utils.*;
  * Implementation of the Builder pattern, with a fluent interface that creates a
  * {@link OAuthService}
  * 
- * @author Pablo Fernandez
+ * @author z
  *
  */
-public class ServiceBuilder
+public class MagentoServiceBuilder
 {
   protected String apiKey;
   protected String apiSecret;
   protected String callback;
-  protected Api api;
+  protected ApiInitializer api;
   protected String scope;
   protected SignatureType signatureType;
   protected OutputStream debugStream;
@@ -27,7 +27,7 @@ public class ServiceBuilder
   /**
    * Default constructor
    */
-  public ServiceBuilder()
+  public MagentoServiceBuilder()
   {
     this.callback = OAuthConstants.OUT_OF_BAND;
     this.signatureType = SignatureType.Header;
@@ -38,18 +38,19 @@ public class ServiceBuilder
    * Configures the {@link Api}
    * 
    * @param apiClass the class of one of the existent {@link Api}s on org.scribe.api package
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder provider(Class<? extends Api> apiClass)
+  public MagentoServiceBuilder provider(Class<? extends ApiInitializer> apiClass, String baseURL)
   {
     this.api = createApi(apiClass);
+    this.api.setBaseURL(baseURL);
     return this;
   }
 
-  protected Api createApi(Class<? extends Api> apiClass)
+  protected ApiInitializer createApi(Class<? extends ApiInitializer> apiClass)
   {
     Preconditions.checkNotNull(apiClass, "Api class cannot be null");
-    Api api;
+    ApiInitializer api;
     try
     {
       api = apiClass.newInstance();  
@@ -67,9 +68,9 @@ public class ServiceBuilder
    * Overloaded version. Let's you use an instance instead of a class.
    *
    * @param api instance of {@link Api}s
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder provider(Api api)
+  public MagentoServiceBuilder provider(ApiInitializer api)
   {
 	  Preconditions.checkNotNull(api, "Api cannot be null");
 	  this.api = api;
@@ -80,9 +81,9 @@ public class ServiceBuilder
    * Adds an OAuth callback url
    * 
    * @param callback callback url. Must be a valid url or 'oob' for out of band OAuth
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder callback(String callback)
+  public MagentoServiceBuilder callback(String callback)
   {
     Preconditions.checkNotNull(callback, "Callback can't be null");
     this.callback = callback;
@@ -93,9 +94,9 @@ public class ServiceBuilder
    * Configures the api key
    * 
    * @param apiKey The api key for your application
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder apiKey(String apiKey)
+  public MagentoServiceBuilder apiKey(String apiKey)
   {
     Preconditions.checkEmptyString(apiKey, "Invalid Api key");
     this.apiKey = apiKey;
@@ -106,9 +107,9 @@ public class ServiceBuilder
    * Configures the api secret
    * 
    * @param apiSecret The api secret for your application
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder apiSecret(String apiSecret)
+  public MagentoServiceBuilder apiSecret(String apiSecret)
   {
     Preconditions.checkEmptyString(apiSecret, "Invalid Api secret");
     this.apiSecret = apiSecret;
@@ -119,9 +120,9 @@ public class ServiceBuilder
    * Configures the OAuth scope. This is only necessary in some APIs (like Google's).
    * 
    * @param scope The OAuth scope
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder scope(String scope)
+  public MagentoServiceBuilder scope(String scope)
   {
     Preconditions.checkEmptyString(scope, "Invalid OAuth scope");
     this.scope = scope;
@@ -132,23 +133,23 @@ public class ServiceBuilder
    * Configures the signature type, choose between header, querystring, etc. Defaults to Header
    *
    * @param scope The OAuth scope
-   * @return the {@link ServiceBuilder} instance for method chaining
+   * @return the {@link MagentoServiceBuilder} instance for method chaining
    */
-  public ServiceBuilder signatureType(SignatureType type)
+  public MagentoServiceBuilder signatureType(SignatureType type)
   {
     Preconditions.checkNotNull(type, "Signature type can't be null");
     this.signatureType = type;
     return this;
   }
 
-  public ServiceBuilder debugStream(OutputStream stream)
+  public MagentoServiceBuilder debugStream(OutputStream stream)
   {
     Preconditions.checkNotNull(stream, "debug stream can't be null");
     this.debugStream = stream;
     return this;
   }
 
-  public ServiceBuilder debug()
+  public MagentoServiceBuilder debug()
   {
     this.debugStream(System.out);
     return this;
