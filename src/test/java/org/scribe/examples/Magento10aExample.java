@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ Magento 1.0a Oauth specific example.
  */
 package org.scribe.examples;
 
